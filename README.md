@@ -27,8 +27,9 @@ BufEnter autocmd.
 Install
 -------
 
-Install direnv from the `feature/vim-support` branch.
+direnv support is still fresh so you'll need a version from the master branch.
 
+Then install the plugin.
 With [Pathogen](https://github.com/tpope/vim-pathogen)
 
 ```
