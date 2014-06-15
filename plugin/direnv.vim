@@ -10,16 +10,22 @@ let g:loaded_direnv = 1
 command! -nargs=0 DirenvExport call <SID>DirenvExport ()
 
 function! s:DirenvExport()
-  " FIXME: vim seems to read both stdout and stderr
+  " FIXME: vim seems to read both stdout and stderr, it would be nice to
+  "        display stderr in a buffer on error
   execute system('direnv export vim 2>/dev/null')
 endfunction
 
 " TODO: Execute DirenvExport on load
 " TODO: Execute DirenvExport when the PWD changes
+"       vim doesn't have a chdir event unfortunately
 
-augroup direnv
-  autocmd VimEnter * call s:DirenvExport()
-  autocmd BufEnter * call s:DirenvExport()
-augroup END
+if has("autocmd")
+  augroup direnv
+    autocmd VimEnter * call s:DirenvExport()
+    autocmd BufEnter * call s:DirenvExport()
+  augroup END
+
+  autocmd BufRead,BufNewFile .envrc set filetype=bash
+endif
 
 " vim:set ft=vim sw=2 sts=2 et:
