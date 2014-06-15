@@ -3,18 +3,26 @@ direnv.vim - yup
 
 STATUS: Experimental
 
-Adds support for direnv environment loading inside of vim. For now it's more
-like a proof of concept.
+This plugin's aim is to integrate direnv and vim. Because vim can shell out
+to other tools it's nice if the environment is in sync with the usual shell.
 
-On VimEnter and BufEnter, vim evaluates the `direnv export vim` output which
-updates the environment variables to the current directory. Any other shell
-command can take advantage of that.
+It also `set filetype=bash` for .envrc files.
 
 Features
 --------
 
 * direnv environment loading
 * filetype=bash for .envrc files
+
+Limitations
+-----------
+
+The vimscript syntax seems to limit keys to alphanumeric characters. If any
+environment variable key is something different the plugin might fail.
+
+Ideally direnv would only execute when changing directory but vim doesn't seem
+to have a callback for that. So instead we settle to using the VimEnter and
+BufEnter autocmd.
 
 Install
 -------
@@ -40,12 +48,12 @@ I would love to only execute direnv whenever the directory changes but vim
 doesn't seem to have the related autocmd event. The 'NERD tree" plugin has the
 same issue.
 
-Better integration with vim ; allow/deny authorization mechanism, direnv edit
+Allow/deny authorization mechanism.
+
+.envrc edit integration
 
 Add proper vim documentation.
 
-My vimscript skill is tangent to zero so feedback is welcome
+My vimscript skill is tangent to zero, feedback is welcome
 <https://github.com/zimbatm/direnv.vim>
-
-
 
