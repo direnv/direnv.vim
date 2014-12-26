@@ -25,7 +25,7 @@ if has("autocmd")
     autocmd BufEnter * call s:DirenvExport()
   augroup END
 
-  autocmd BufRead,BufNewFile .envrc set filetype=bash
+  autocmd BufRead,BufNewFile .envrc set filetype=sh
 endif
 
 " vim:set ft=vim sw=2 sts=2 et:
