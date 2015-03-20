@@ -10,9 +10,11 @@ let g:loaded_direnv = 1
 command! -nargs=0 DirenvExport call <SID>DirenvExport ()
 
 function! s:DirenvExport()
-  " FIXME: vim seems to read both stdout and stderr, it would be nice to
-  "        display stderr in a buffer on error
-  execute system('direnv export vim 2>/dev/null')
+  if filereadable('.envrc')
+    " FIXME: vim seems to read both stdout and stderr, it would be nice to
+    "        display stderr in a buffer on error
+    execute system('direnv export vim 2>/dev/null')
+  endif
 endfunction
 
 " TODO: Execute DirenvExport on load
