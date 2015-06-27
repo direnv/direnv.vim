@@ -33,12 +33,12 @@ Then install the plugin.
 With [Pathogen](https://github.com/tpope/vim-pathogen)
 
 ```
-git clone https://github.com/zimbatm/direnv.vim.git ~/.vim/bundle/direnv.vim
+git clone https://github.com/direnv/direnv.vim.git ~/.vim/bundle/direnv.vim
 ```
 
 and restart.
 
-Make sure to install the latest version 
+Make sure to install the latest version
 
 TODO
 ----
@@ -56,5 +56,5 @@ Allow/deny authorization mechanism.
 Add proper vim documentation.
 
 My vimscript skill is tangent to zero, feedback is welcome
-<https://github.com/zimbatm/direnv.vim>
+<https://github.com/direnv/direnv.vim>
 
