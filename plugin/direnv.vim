@@ -24,7 +24,7 @@ func! s:job.on_exit(_, status, ...) abort
 
   for m in self.stderr
     if m isnot# ''
-      echoerr m
+      echom m
     endif
   endfor
   exe join(self.stdout, "\n")
@@ -59,7 +59,7 @@ func! direnv#export() abort
     call job_start(l:cmd, s:job)
   else
     let l:tmp = tempname()
-    echoerr system(printf(join(l:cmd).' '.&shellredir, l:tmp))
+    echom system(printf(join(l:cmd).' '.&shellredir, l:tmp))
     exe 'source '.l:tmp
     call delete(l:tmp)
   endif
