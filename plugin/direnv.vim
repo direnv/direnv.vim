@@ -8,6 +8,7 @@ endif
 let g:loaded_direnv = 1
 
 let s:direnv_cmd = get(g:, 'direnv_cmd', 'direnv')
+let s:direnv_auto = get(g:, 'direnv_auto', 1)
 
 let s:job = { 'running': 0, 'stdout': [''], 'stderr': [''] }
 " NeoVim {{{
@@ -71,12 +72,15 @@ augroup envrc
   au!
   autocmd BufRead,BufNewFile .envrc set filetype=sh
   autocmd BufWritePost .envrc DirenvExport
-  autocmd VimEnter * DirenvExport
 
-  if exists('##DirChanged')
-    autocmd DirChanged * DirenvExport
-  else
-    autocmd BufEnter * DirenvExport
+  if s:direnv_auto
+    autocmd VimEnter * DirenvExport
+
+    if exists('##DirChanged')
+      autocmd DirChanged * DirenvExport
+    else
+      autocmd BufEnter * DirenvExport
+    endif
   endif
 augroup END
 
