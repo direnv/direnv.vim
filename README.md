@@ -1,33 +1,40 @@
 direnv.vim - yup
 ================
 
-STATUS: Experimental
+This plugin aim is to integrate [Direnv][direnv] and [Vim][vim]. Because Vim can
+shell out to other tools it's nice if the environment is in sync with the usual
+shell.
 
-This plugin's aim is to integrate direnv and vim. Because vim can shell out
-to other tools it's nice if the environment is in sync with the usual shell.
-
-It also `set filetype=bash` for .envrc files.
+It also `set filetype=bash` for `.envrc` files.
 
 Features
 --------
 
-* direnv environment loading
-* filetype=bash for .envrc files
+* Direnv environment loading
+* `filetype=bash` for `.envrc` files
+* Asynchronous running of Direnv command which won't delay your workflow.
+  Supported in Vim 8 (with `job` and `channel`) or NeoVim.
 
 Limitations
 -----------
 
-The vimscript syntax seems to limit keys to alphanumeric characters. If any
+The Vimscript syntax seems to limit keys to alphanumeric characters. If any
 environment variable key is something different the plugin might fail.
 
-Ideally direnv would only execute when changing directory but vim doesn't seem
-to have a callback for that. So instead we settle to using the VimEnter and
-BufEnter autocmd.
+Mainline Vim doesn't (yet) have auto command event that is fired on directory
+change, however in [NeoVim][neovim] there already is one named: `DirChange`.
+Thanks to that Direnv will be fired only on `VimEnter` (as entering Vim isn't
+directory change) and on `DirChange`.
+
+For mainline Vim there is fallback that run on each `BufEnter` (not ideal
+solution, but for now we have no other option).
+
+Due to asynchronous calls to Direnv if you work too fast then it can happen that
+variables from `.envrc` will not be yet loaded. However highly unlikely you are
+so fast.
 
 Install
 -------
-
-direnv support is still fresh so you'll need a version from the master branch.
 
 Then install the plugin.
 With [Pathogen](https://github.com/tpope/vim-pathogen)
@@ -38,23 +45,15 @@ git clone https://github.com/direnv/direnv.vim.git ~/.vim/bundle/direnv.vim
 
 and restart.
 
-Make sure to install the latest version
-
 TODO
 ----
 
-Work out the quirks.
+- Allow/deny authorization mechanism.
+- Add proper Vim documentation.
 
-I would love to only execute direnv whenever the directory changes but vim
-doesn't seem to have the related autocmd event. The 'NERD tree" plugin has the
-same issue.
-
-Allow/deny authorization mechanism.
-
-.envrc edit integration
-
-Add proper vim documentation.
-
-My vimscript skill is tangent to zero, feedback is welcome
+My Vimscript skill is tangent to zero, feedback is welcome
 <https://github.com/direnv/direnv.vim>
 
+[direnv]: https://direnv.net
+[vim]: http://vim.org
+[neovim]: https://neovim.io
