@@ -10,6 +10,7 @@ let g:loaded_direnv = 1
 command! -nargs=0 DirenvExport call direnv#export()
 
 augroup envrc
+  au!
   autocmd BufRead,BufNewFile .envrc set filetype=sh
   autocmd BufWritePost .envrc DirenvExport
   autocmd VimEnter * DirenvExport
