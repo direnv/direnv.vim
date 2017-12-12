@@ -33,13 +33,13 @@ endfunc
 " }}}
 " Vim {{{
 func! s:err_cb(state, _, data) abort
-  call state.on_stderr(0, split(a:data, "\n", 1))
+  call a:state.on_stderr(0, split(a:data, "\n", 1))
 endfunc
 func! s:out_cb(state, _, data) abort
-  call state.on_stdout(0, split(a:data, "\n", 1))
+  call a:state.on_stdout(0, split(a:data, "\n", 1))
 endfunc
 func! s:exit_cb(state, _, status) abort
-  call state.on_exit(0, a:status)
+  call a:state.on_exit(0, a:status)
 endfunc
 " }}}
 
