@@ -32,14 +32,14 @@ func! s:job.on_exit(_, status, ...) abort
 endfunc
 " }}}
 " Vim {{{
-func! s:job.err_cb(_, data) abort
-  call self.on_stderr(0, split(a:data, "\n", 1))
+func! s:err_cb(state, _, data) abort
+  call a:state.on_stderr(0, split(a:data, "\n", 1))
 endfunc
-func! s:job.out_cb(_, data) abort
-  call self.on_stdout(0, split(a:data, "\n", 1))
+func! s:out_cb(state, _, data) abort
+  call a:state.on_stdout(0, split(a:data, "\n", 1))
 endfunc
-func! s:job.exit_cb(_, status) abort
-  call self.on_exit(0, a:status)
+func! s:exit_cb(state, _, status) abort
+  call a:state.on_exit(0, a:status)
 endfunc
 " }}}
 
@@ -57,7 +57,11 @@ func! direnv#export() abort
   if has('nvim')
     call jobstart(l:cmd, s:job)
   elseif has('job') && has('channel')
-    call job_start(l:cmd, s:job)
+    call job_start(l:cmd, {
+          \ 'err_cb': function('s:err_cb', [s:job]),
+          \ 'out_cb': function('s:out_cb', [s:job]),
+          \ 'exit_cb': function('s:exit_cb', [s:job]),
+          \ })
   else
     let l:tmp = tempname()
     echom system(printf(join(l:cmd).' '.&shellredir, l:tmp))
