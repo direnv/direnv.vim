@@ -6,18 +6,18 @@ scriptencoding utf-8
 
 let s:direnv_cmd = get(g:, 'direnv_cmd', 'direnv')
 let s:direnv_auto = get(g:, 'direnv_auto', 1)
-let s:job_status = { 'running': 0, 'stdout': [''], 'stderr': [''] }
+let s:job_status = { 'running': 0, 'stdout': [], 'stderr': [] }
 
 function! direnv#auto() abort
   return s:direnv_auto
 endfunction
 
 function! direnv#on_stdout(_, data, ...) abort
-  let s:job_status.stdout = a:data
+  call extend(s:job_status.stdout, a:data)
 endfunction
 
 function! direnv#on_stderr(_, data, ...) abort
-  let s:job_status.stderr = a:data
+  call extend(s:job_status.stderr, a:data)
 endfunction
 
 function! direnv#on_exit(_, status, ...) abort
@@ -29,6 +29,10 @@ function! direnv#on_exit(_, status, ...) abort
     endif
   endfor
   exec join(s:job_status.stdout, "\n")
+endfunction
+
+function! direnv#job_status_reset() abort
+  let s:job_status = { 'running': 0, 'stdout': [], 'stderr': [] }
 endfunction
 
 function! direnv#err_cb(_, data) abort
@@ -68,6 +72,7 @@ function! direnv#export() abort
     return
   endif
 
+  call direnv#job_status_reset()
   let s:job_status.running = 1
   let l:cmd = [s:direnv_cmd, 'export', 'vim']
   if has('nvim')
