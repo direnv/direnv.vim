@@ -1,0 +1,19 @@
+language: ruby
+sudo: false
+rvm:
+  - 2.3.6
+env:
+  - DIRENV_VERSION=2.14.0
+
+addons:
+  apt:
+    packages:
+      - vim-gtk
+
+before_script:
+  - "export DISPLAY=:99.0"
+  - "export PATH=$HOME/bin:$PATH"
+  - "sh -e /etc/init.d/xvfb start"
+  - spec/install_direnv.sh
+
+script: bundle exec rspec --format=documentation
