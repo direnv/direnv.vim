@@ -6,7 +6,7 @@ scriptencoding utf-8
 
 let s:direnv_cmd = get(g:, 'direnv_cmd', 'direnv')
 let s:direnv_auto = get(g:, 'direnv_auto', 1)
-let s:job_status = { 'running': 0, 'stdout': [], 'stderr': [] }
+let s:job_status = { 'stdout': [], 'stderr': [] }
 
 function! direnv#auto() abort
   return s:direnv_auto
@@ -21,8 +21,6 @@ function! direnv#on_stderr(_, data, ...) abort
 endfunction
 
 function! direnv#on_exit(_, status, ...) abort
-  let s:job_status.running = 0
-
   for l:m in s:job_status.stderr
     if l:m isnot# ''
       echom l:m
@@ -32,7 +30,7 @@ function! direnv#on_exit(_, status, ...) abort
 endfunction
 
 function! direnv#job_status_reset() abort
-  let s:job_status = { 'running': 0, 'stdout': [], 'stderr': [] }
+  let s:job_status = { 'stdout': [], 'stderr': [] }
 endfunction
 
 function! direnv#err_cb(_, data) abort
@@ -68,12 +66,8 @@ function! direnv#export() abort
     echoerr 'No Direnv executable, add it to your PATH or set correct g:direnv_cmd'
     return
   endif
-  if s:job_status.running
-    return
-  endif
 
   call direnv#job_status_reset()
-  let s:job_status.running = 1
   let l:cmd = [s:direnv_cmd, 'export', 'vim']
   if has('nvim')
     call jobstart(l:cmd, s:job)
