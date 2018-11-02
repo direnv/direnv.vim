@@ -7,7 +7,7 @@ scriptencoding utf-8
 let s:direnv_cmd = get(g:, 'direnv_cmd', 'direnv')
 let s:direnv_interval = get(g:, 'direnv_interval', 500)
 let s:direnv_auto = get(g:, 'direnv_auto', 1)
-let s:job_status = { 'stdout': [], 'stderr': [] }
+let s:job_status = { 'running': 0, 'stdout': [], 'stderr': [] }
 
 function! direnv#auto() abort
   return s:direnv_auto
@@ -22,6 +22,8 @@ function! direnv#on_stderr(_, data, ...) abort
 endfunction
 
 function! direnv#on_exit(_, status, ...) abort
+  let s:job_status.running = 0
+
   for l:m in s:job_status.stderr
     if l:m isnot# ''
       echom l:m
@@ -31,7 +33,8 @@ function! direnv#on_exit(_, status, ...) abort
 endfunction
 
 function! direnv#job_status_reset() abort
-  let s:job_status = { 'stdout': [], 'stderr': [] }
+  let s:job_status['stdout'] = []
+  let s:job_status['stderr'] = []
 endfunction
 
 function! direnv#err_cb(_, data) abort
@@ -72,11 +75,17 @@ function! direnv#export_core() abort
     return
   endif
 
-  call direnv#job_status_reset()
   let l:cmd = [s:direnv_cmd, 'export', 'vim']
   if has('nvim')
     call jobstart(l:cmd, s:job)
   elseif has('job') && has('channel')
+    if !has('timers')
+      if s:job_status.running
+        return
+      endif
+      let s:job_status.running = 1
+    endif
+    call direnv#job_status_reset()
     call job_start(l:cmd, s:job)
   else
     let l:tmp = tempname()
@@ -88,7 +97,13 @@ endfunction
 
 let s:export_debounced = {'id': 0}
 
-function! s:export_debounced.do()
-  call timer_stop(self.id)
-  let self.id = timer_start(s:direnv_interval, { -> direnv#export_core() })
-endfunction
+if has('timers')
+  function! s:export_debounced.do()
+    call timer_stop(self.id)
+    let self.id = timer_start(s:direnv_interval, { -> direnv#export_core() })
+  endfunction
+else
+  function! s:export_debounced.do()
+    call direnv#export_core()
+  endfunction
+endif
