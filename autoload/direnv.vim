@@ -5,6 +5,7 @@
 scriptencoding utf-8
 
 let s:direnv_cmd = get(g:, 'direnv_cmd', 'direnv')
+let s:direnv_interval = get(g:, 'direnv_interval', 500)
 let s:direnv_auto = get(g:, 'direnv_auto', 1)
 let s:job_status = { 'stdout': [], 'stderr': [] }
 
@@ -62,6 +63,10 @@ else
 endif
 
 function! direnv#export() abort
+  call s:export_debounced.do()
+endfunction
+
+function! direnv#export_core() abort
   if !executable(s:direnv_cmd)
     echoerr 'No Direnv executable, add it to your PATH or set correct g:direnv_cmd'
     return
@@ -79,4 +84,11 @@ function! direnv#export() abort
     exe 'source '.l:tmp
     call delete(l:tmp)
   endif
+endfunction
+
+let s:export_debounced = {'id': 0}
+
+function! s:export_debounced.do()
+  call timer_stop(self.id)
+  let self.id = timer_start(s:direnv_interval, { -> direnv#export_core() })
 endfunction
