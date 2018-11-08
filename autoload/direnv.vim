@@ -6,6 +6,7 @@ scriptencoding utf-8
 
 let s:direnv_cmd = get(g:, 'direnv_cmd', 'direnv')
 let s:direnv_interval = get(g:, 'direnv_interval', 500)
+let s:direnv_max_wait = get(g:, 'direnv_max_wait', 5)
 let s:direnv_auto = get(g:, 'direnv_auto', 1)
 let s:job_status = { 'running': 0, 'stdout': [], 'stderr': [] }
 
@@ -95,13 +96,20 @@ function! direnv#export_core() abort
   endif
 endfunction
 
-let s:export_debounced = {'id': 0}
+let s:export_debounced = {'id': 0, 'counter': 0}
 
 if has('timers')
   function! s:export_debounced.do()
     call timer_stop(self.id)
-    let self.id = timer_start(s:direnv_interval, { -> direnv#export_core() })
-  endfunction
+    if self.counter < s:direnv_max_wait
+      let self.counter = self.counter + 1
+      let self.id = timer_start(s:direnv_interval, { -> let self.counter = 0 | direnv#export_core() })
+    else
+      let self.counter = 0
+      let self.id = 0
+      call direnv#export_core()
+    endif
+  endif
 else
   function! s:export_debounced.do()
     call direnv#export_core()
