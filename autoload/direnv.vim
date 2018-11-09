@@ -99,15 +99,19 @@ endfunction
 let s:export_debounced = {'id': 0, 'counter': 0}
 
 if has('timers')
+  function! s:export_debounced.call(...)
+    let self.id = 0
+    let self.counter = 0
+    call direnv#export_core()
+  endfunction
+
   function! s:export_debounced.do()
     call timer_stop(self.id)
     if self.counter < s:direnv_max_wait
       let self.counter = self.counter + 1
-      let self.id = timer_start(s:direnv_interval, { -> let self.counter = 0 | direnv#export_core() })
+      let self.id = timer_start(s:direnv_interval, self.call)
     else
-      let self.counter = 0
-      let self.id = 0
-      call direnv#export_core()
+      call self.call()
     endif
   endfunction
 else
