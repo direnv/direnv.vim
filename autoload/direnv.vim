@@ -109,7 +109,7 @@ if has('timers')
       let self.id = 0
       call direnv#export_core()
     endif
-  endif
+  endfunction
 else
   function! s:export_debounced.do()
     call direnv#export_core()
