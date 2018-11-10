@@ -5,6 +5,8 @@
 scriptencoding utf-8
 
 let s:direnv_cmd = get(g:, 'direnv_cmd', 'direnv')
+let s:direnv_interval = get(g:, 'direnv_interval', 500)
+let s:direnv_max_wait = get(g:, 'direnv_max_wait', 5)
 let s:direnv_auto = get(g:, 'direnv_auto', 1)
 let s:job_status = { 'running': 0, 'stdout': [], 'stderr': [] }
 
@@ -32,7 +34,8 @@ function! direnv#on_exit(_, status, ...) abort
 endfunction
 
 function! direnv#job_status_reset() abort
-  let s:job_status = { 'running': 0, 'stdout': [], 'stderr': [] }
+  let s:job_status['stdout'] = []
+  let s:job_status['stderr'] = []
 endfunction
 
 function! direnv#err_cb(_, data) abort
@@ -64,20 +67,26 @@ else
 endif
 
 function! direnv#export() abort
+  call s:export_debounced.do()
+endfunction
+
+function! direnv#export_core() abort
   if !executable(s:direnv_cmd)
     echoerr 'No Direnv executable, add it to your PATH or set correct g:direnv_cmd'
     return
   endif
-  if s:job_status.running
-    return
-  endif
 
-  call direnv#job_status_reset()
-  let s:job_status.running = 1
   let l:cmd = [s:direnv_cmd, 'export', 'vim']
   if has('nvim')
     call jobstart(l:cmd, s:job)
   elseif has('job') && has('channel')
+    if !has('timers')
+      if s:job_status.running
+        return
+      endif
+      let s:job_status.running = 1
+    endif
+    call direnv#job_status_reset()
     call job_start(l:cmd, s:job)
   else
     let l:tmp = tempname()
@@ -86,3 +95,27 @@ function! direnv#export() abort
     call delete(l:tmp)
   endif
 endfunction
+
+let s:export_debounced = {'id': 0, 'counter': 0}
+
+if has('timers')
+  function! s:export_debounced.call(...)
+    let self.id = 0
+    let self.counter = 0
+    call direnv#export_core()
+  endfunction
+
+  function! s:export_debounced.do()
+    call timer_stop(self.id)
+    if self.counter < s:direnv_max_wait
+      let self.counter = self.counter + 1
+      let self.id = timer_start(s:direnv_interval, self.call)
+    else
+      call self.call()
+    endif
+  endfunction
+else
+  function! s:export_debounced.do()
+    call direnv#export_core()
+  endfunction
+endif
