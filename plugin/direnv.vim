@@ -16,12 +16,9 @@ let g:loaded_direnv = 1
 
 command! -nargs=0 DirenvExport call direnv#export()
 
-augroup direnv_rc
-  au!
-  autocmd BufRead,BufNewFile .envrc set filetype=sh
-  autocmd BufWritePost .envrc DirenvExport
-
-  if direnv#auto()
+if direnv#auto()
+  augroup direnv_rc
+    au!
     autocmd VimEnter * DirenvExport
 
     if exists('##DirChanged')
@@ -29,7 +26,7 @@ augroup direnv_rc
     else
       autocmd BufEnter * DirenvExport
     endif
-  endif
-augroup END
+  augroup END
+endif
 
 " vi: fdm=marker sw=2 sts=2 et
