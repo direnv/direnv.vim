@@ -5,13 +5,13 @@ This plugin aim is to integrate [Direnv][direnv] and [Vim][vim]. Because Vim can
 shell out to other tools it's nice if the environment is in sync with the usual
 shell.
 
-It also `set filetype=bash` for `.envrc` files.
+It also adds syntax highlighting for `.envrc` files.
 
 Features
 --------
 
 * Direnv environment loading
-* `filetype=bash` for `.envrc` files
+* filetype & syntax highlighting for `.envrc` files
 * Asynchronous running of Direnv command which won't delay your workflow.
   Supported in Vim 8 (with `job` and `channel`) or NeoVim.
 
