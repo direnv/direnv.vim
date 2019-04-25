@@ -21,12 +21,12 @@ Limitations
 The Vimscript syntax seems to limit keys to alphanumeric characters. If any
 environment variable key is something different the plugin might fail.
 
-Mainline Vim doesn't (yet) have auto command event that is fired on directory
-change, however in [NeoVim][neovim] there already is one named: `DirChange`.
-Thanks to that Direnv will be fired only on `VimEnter` (as entering Vim isn't
-directory change) and on `DirChange`.
+The newer Vim builds (>8.0.1459) & [NeoVim][neovim] have auto command event
+that is fired on directory changes, named: `DirChanged`. Thanks to that Direnv
+will be fired only on `VimEnter` (as entering Vim isn't directory change) and
+on `DirChanged`.
 
-For mainline Vim there is fallback that run on each `BufEnter` (not ideal
+For older Vim's there is fallback that run on each `BufEnter` (not ideal
 solution, but for now we have no other option).
 
 Due to asynchronous calls to Direnv if you work too fast then it can happen that
