@@ -28,7 +28,7 @@ not to run this explicitly.
 #### `g:direnv_auto`
 
 It will not execute `DirenvExport` automatically if `let g:direnv_auto
-= 0`.
+= 0`. The default value is `1`.
 
 ### `EditDirenvrc`
 
