@@ -42,7 +42,7 @@ ordered below.
 ### `EditEnvrc`
 
 Open the detected `.envrc` if found or a new buffer to edit `.envrc` on the
-current directory.
+current directory otherwise.
 
 #### `g:direnv_edit_mode`
 
