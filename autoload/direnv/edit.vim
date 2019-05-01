@@ -25,16 +25,32 @@ function! direnv#edit#direnvrc() abort
   else
     let l:direnvrc_dir = $XDG_CONFIG_HOME . '/direnv'
   endif
-  if filereadable(l:direnvrc_dir . '/direnvrc') ||
-        \ isdirectory(l:direnvrc_dir) && !filereadable($HOME . '/.direnvrc')
+  if filereadable(l:direnvrc_dir . '/direnvrc')
     let l:direnvrc = l:direnvrc_dir . '/direnvrc'
-  else
+  elseif filereadable($HOME . '/.direnvrc')
     let l:direnvrc = $HOME . '/.direnvrc'
+  else
+    let l:direnvrc = l:direnvrc_dir . '/direnvrc'
+    if !isdirectory(l:direnvrc_dir)
+      let l:result = direnv#edit#mkdir(l:direnvrc_dir)
+      if !l:result
+        echoerr 'Vim cannot create the directory:' l:direnvrc_dir
+        return
+      endif
+    endif
   endif
   if !filereadable(l:direnvrc)
     echom 'new direnvrc file will be created:' l:direnvrc
   endif
   call direnv#edit#execute(l:direnvrc)
+endfunction
+
+function! direnv#edit#mkdir(dir) abort
+  if !exists('*mkdir')
+    return 0
+  endif
+  let l:result = mkdir(a:dir, 'p', 0700)
+  return l:result
 endfunction
 
 function! direnv#edit#execute(file) abort
