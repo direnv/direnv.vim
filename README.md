@@ -38,7 +38,9 @@ ordered below.
 - `$XDG_CONFIG_HOME/direnv/direnvrc`
 - `~/.config/direnv/direnvrc`
 - `~/.direnvrc`
+
 If no file is open it will default to `${XDG_CONFIG_HOME:-~/.config}/direnv/direnvrc`.
+
 ### `EditEnvrc`
 
 Open the detected `.envrc` if found or a new buffer to edit `.envrc` on the
