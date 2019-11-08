@@ -11,3 +11,5 @@ augroup direnv-buffer
   autocmd! * <buffer>
   autocmd BufWritePost <buffer> DirenvExport
 augroup END
+
+setlocal commentstring=#%s
