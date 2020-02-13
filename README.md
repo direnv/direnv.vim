@@ -45,6 +45,15 @@ git clone https://github.com/direnv/direnv.vim.git ~/.vim/bundle/direnv.vim
 
 and restart.
 
+Configuration
+-------------
+
+To stop direnv.vim echoing the direnv output:
+
+```viml
+let g:direnv_silent_load = 1
+```
+
 TODO
 ----
 
