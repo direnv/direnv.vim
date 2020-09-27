@@ -72,7 +72,7 @@ endfunction
 
 function! direnv#export_core() abort
   if !executable(s:direnv_cmd)
-    echoerr 'No Direnv executable, add it to your PATH or set correct g:direnv_cmd'
+    echom 'No Direnv executable, add it to your PATH or set correct g:direnv_cmd'
     return
   endif
 
