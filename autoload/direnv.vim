@@ -10,6 +10,10 @@ let s:direnv_max_wait = get(g:, 'direnv_max_wait', 5)
 let s:direnv_auto = get(g:, 'direnv_auto', 1)
 let s:job_status = { 'running': 0, 'stdout': [], 'stderr': [] }
 
+if !exists('g:direnv_silent_load')
+  let g:direnv_silent_load = 0
+endif
+
 function! direnv#auto() abort
   return s:direnv_auto
 endfunction
@@ -25,11 +29,13 @@ endfunction
 function! direnv#on_exit(_, status, ...) abort
   let s:job_status.running = 0
 
-  for l:m in s:job_status.stderr
-    if l:m isnot# ''
-      echom l:m
-    endif
-  endfor
+  if !g:direnv_silent_load
+    for l:m in s:job_status.stderr
+      if l:m isnot# ''
+        echom l:m
+      endif
+    endfor
+  endif
   exec join(s:job_status.stdout, "\n")
   call direnv#extra_vimrc#load()
 endfunction
