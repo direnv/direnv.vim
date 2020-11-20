@@ -14,6 +14,48 @@ Features
 * filetype & syntax highlighting for `.envrc` files
 * Asynchronous running of Direnv command which won't delay your workflow.
   Supported in Vim 8 (with `job` and `channel`) or NeoVim.
+* Add commands to edit `direnvrc` or `.envrc`'s.
+
+Commands
+--------
+
+### `DirenvExport`
+
+Run the Direnv command and load the valid settings. This command will be
+executed automatically (and asynchronously) by `autocmd` events, so you need
+not to run this explicitly.
+
+#### `g:direnv_auto`
+
+It will not execute `DirenvExport` automatically if `let g:direnv_auto
+= 0`. The default value is `1`.
+
+### `EditDirenvrc`
+
+Open the global setting file for the Direnv command. This searches files
+ordered below.
+
+- `$XDG_CONFIG_HOME/direnv/direnvrc`
+- `~/.config/direnv/direnvrc`
+- `~/.direnvrc`
+
+If no file is open it will default to `${XDG_CONFIG_HOME:-~/.config}/direnv/direnvrc`.
+
+### `EditEnvrc`
+
+Open the detected `.envrc` if found or a new buffer to edit `.envrc` on the
+current directory otherwise.
+
+#### `g:direnv_edit_mode`
+
+Select the command to open buffers to edit. The default value is `'edit'`.
+
+```vim
+" split the window before editing files
+let g:direnv_edit_mode = 'split'
+" split vertically
+let g:direnv_edit_mode = 'vsplit'
+```
 
 Limitations
 -----------

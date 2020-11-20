@@ -15,6 +15,8 @@ let g:loaded_direnv = 1
 " `s:job_status` dictionary. `nvim` gets `s:job` set as `s:job_status`.
 
 command! -nargs=0 DirenvExport call direnv#export()
+command! -nargs=0 EditDirenvrc call direnv#edit#direnvrc()
+command! -nargs=0 EditEnvrc call direnv#edit#envrc()
 
 if direnv#auto()
   augroup direnv_rc
