@@ -7,10 +7,8 @@ let s:direnv_edit_mode = get(g:, 'direnv_edit_mode', 'edit')
 function! direnv#edit#envrc() abort
   if $DIRENV_DIR !=# ''
     let l:envrc_dir = substitute($DIRENV_DIR, '^-', '', '')
-  elseif expand('%') ==# ''
-    let l:envrc_dir = getcwd()
   else
-    let l:envrc_dir = expand('%:p')
+    let l:envrc_dir = getcwd()
   endif
   let l:envrc = l:envrc_dir . '/.envrc'
   if !filereadable(l:envrc)
