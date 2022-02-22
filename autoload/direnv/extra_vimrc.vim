@@ -22,7 +22,7 @@ function! direnv#extra_vimrc#check() abort
     let l:direnv_dir = substitute($DIRENV_DIR, '^-', '', '')
     " TODO think about Windows?
     if stridx(l:filedir, l:direnv_dir) == 0
-      call direnv#extra_vimrc#load()
+      call direnv#post_direnv_load()
     endif
   endif
 endfunction

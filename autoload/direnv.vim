@@ -18,7 +18,7 @@ function! direnv#auto() abort
   return s:direnv_auto
 endfunction
 
-function! direnv#after_loaded() abort
+function! direnv#post_direnv_load() abort
   call direnv#extra_vimrc#load()
   doautocmd User DirenvLoaded
 endfunction
@@ -42,7 +42,7 @@ function! direnv#on_exit(_, status, ...) abort
     endfor
   endif
   exec join(s:job_status.stdout, "\n")
-  call direnv#after_loaded()
+  call direnv#post_direnv_load()
 endfunction
 
 function! direnv#job_status_reset() abort
@@ -105,7 +105,7 @@ function! direnv#export_core() abort
     echom system(printf(join(l:cmd).' '.&shellredir, l:tmp))
     exe 'source '.l:tmp
     call delete(l:tmp)
-    call direnv#after_loaded()
+    call direnv#post_direnv_load()
   endif
 endfunction
 
