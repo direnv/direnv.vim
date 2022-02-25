@@ -24,11 +24,15 @@ function! direnv#post_direnv_load() abort
 endfunction
 
 function! direnv#on_stdout(_, data, ...) abort
-  call extend(s:job_status.stdout, a:data)
+  if a:data != ['']
+    call extend(s:job_status.stdout, a:data)
+  end
 endfunction
 
 function! direnv#on_stderr(_, data, ...) abort
-  call extend(s:job_status.stderr, a:data)
+  if a:data != ['']
+    call extend(s:job_status.stderr, a:data)
+  end
 endfunction
 
 function! direnv#on_exit(_, status, ...) abort
