@@ -1,0 +1,167 @@
+*direnv.txt*			      Plugin to integrate Direnv and (Neo)Vim
+
+Author: zimbatm <http://zimbatm.com/>
+	delphinus <me@delphinus.dev>
+License: MIT License
+
+=============================================================================
+CONTENTS						      *direnv-contents*
+
+  INTRODUCTION						  |direnv-introduction|
+  INSTALLATION						  |direnv-installation|
+  EXTRA VIMRC						  |direnv-installation|
+  COMMANDS						      |direnv-commands|
+  CONFIGURATION						 |direnv-configuration|
+  CAVEATS						       |direnv-caveats|
+
+=============================================================================
+INTRODUCTION						  *direnv-introduction*
+
+This plugin aim is to integrate Direnv and (Neo)Vim.
+
+						 *direnv-introduction-features*
+Features~
+
+* Run Direnv's hook appropriately every when Vim changes its current
+  directory.
+* Run your local `.vimrc` in the current directory when `use vim` directive
+  exists in `.envrc`.
+* Add |ftdetect|, |ftplugin|, and |syntax| to make easy to write your own `.envrc`'s.
+
+=============================================================================
+INSTALLATION						  *direnv-installation*
+
+Clone the repository to load by |packages|.
+
+						   *direnv-installation-forvim*
+For Vim~
+>
+    git clone https://github.com/direnv/direnv.vim \
+      ~/.vim/pack/foo/start/direnv.vim
+<
+						*direnv-installation-forneovim*
+For Neovim~
+>
+    git clone https://github.com/direnv/direnv.vim \
+      ~/.local/share/nvim/site/pack/foo/start/direnv.vim
+
+Or you can use any plugin manager you like.
+
+=============================================================================
+EXTRA VIMRC						    *direnv-extravimrc*
+
+When you use `use vim` directive in the `.envrc`, you can source `.vimrc.local`
+(in default) in changing the current directory of Vim.
+>
+    # in your .envrc (Direnv settings)
+    use vim
+    # you can set your own filename
+    use vim .my-vimrc
+
+With `use vim` directives, Direnv sets the paths in `$DIRENV_EXTRA_VIMRC`
+environmental variable. This plugin reads the variable and sources them.
+
+Internally, this plugin remembers the sourced filenames and does not source it
+again even when `DirenvExport` is called in the same buffer.
+
+NOTE: Unlike the other features of Direnv, this “sourcing” is irreversible.
+You should NOT change settings globally in your `.vimrc.local` because it
+affects other windows/buffers.
+>
+    " in your .vimrc.local
+    " This sets the value only for the window you are in.
+    setlocal scrolloff=3
+    " Also set buffer-local variable for this use.
+    let b:ale_fixers = ['prettier', 'eslint']
+
+=============================================================================
+COMMANDS						      *direnv-commands*
+
+`:DirenvExport`					 *direnv-commands-direnvexport*
+
+Run the Direnv command and load the valid settings. This command will be
+executed automatically (and asynchronously) by |autocmd| events in default.
+
+NOTE: The kind of events this command will be called depends on your (Neo)
+Vim's version. See |direnv-caveats|.
+
+`:EditDirenvrc`					 *direnv-commands-editdirenvrc*
+
+Open the global setting file for the Direnv command. This searches files
+ordered below.
+
+* `$XDG_CONFIG_HOME/direnv/direnvrc`
+* `~/.config/direnv/direnvrc`
+* `~/.direnvrc`
+
+`:EditEnvrc`					    *direnv-commands-editenvrc*
+
+Open the detected `.envrc` if found or a new butter to edit `.envrc` on the
+current directory otherwise.
+
+=============================================================================
+CONFIGURATION						 *direnv-configuration*
+
+All configuration variables must be set before loading the plugin (typically
+in your `.vimrc` or `init.vim`).
+
+`g:direnv_auto`				      *direnv-configuration-direnvauto*
+
+It will not execute |direnv-commands-direnvexport| automatically if the value
+is `0`. Default: `1`.
+>
+    " Call DirenvExport on your demand
+    let g:direnv_auto = 0
+
+`g:direnv_edit_mode`			  *direnv-configuration-direnveditmode*
+
+Select the command to open buffers to edit. Default: `'edit'`.
+>
+    " split the window before editing files
+    let g:direnv_edit_mode = 'split'
+    " split vertically
+    let g:direnv_edit_mode = 'vsplit'
+
+`g:direnv_silent_load`			*direnv-configuration-direnvsilentload*
+
+Stop echoing output from Direnv command. Default: `0`.
+>
+    " Silently call the Direnv command
+    let g:direnv_silent_load = 1
+
+=============================================================================
+AUTOCMD EVENTS						 *direnv-autocmdevents*
+
+`DirenvLoaded`				    *direnv-autocmdevents-direnvloaded*
+
+This plugin calls this |User| event just after sourcing extra vimrc (See
+|direnv-extravimrc|).
+>
+    " Announce when loaded extra vimrc's
+    autocmd User DirenvLoaded :echo 'loaded extra vimrc'
+
+
+=============================================================================
+CAVEATS							       *direnv-caveats*
+
+Environmental variable keys~
+
+The Vimscript syntax seems to limit keys to alphanumeric characters. If any
+environmental variable key is something different, the plugin might fail.
+
+Autocmd events to be called~
+
+The newer Vim builds (>8.0.1459) & Neovim have |Dirchanged| that is fired on
+directory changes. Direnv command will be fired only on |VimEnter| &
+|DirChanged| with them.
+
+For older Vim's, there is a fallback that it fires on each |BufEnter|. This is
+not an ideal solution, but for now we have no other solutions.
+
+Asynchronous loading~
+
+Due to asynchronous calls for Direnv, it can happen that variables from
+`.envrc` will not be available yet, if you work too fast.
+
+=============================================================================
+vim:tw=78:fo=tcq2mM:ts=8:ft=help:norl
