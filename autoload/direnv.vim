@@ -18,12 +18,21 @@ function! direnv#auto() abort
   return s:direnv_auto
 endfunction
 
+function! direnv#post_direnv_load() abort
+  call direnv#extra_vimrc#load()
+  doautocmd User DirenvLoaded
+endfunction
+
 function! direnv#on_stdout(_, data, ...) abort
-  call extend(s:job_status.stdout, a:data)
+  if a:data != ['']
+    call extend(s:job_status.stdout, a:data)
+  end
 endfunction
 
 function! direnv#on_stderr(_, data, ...) abort
-  call extend(s:job_status.stderr, a:data)
+  if a:data != ['']
+    call extend(s:job_status.stderr, a:data)
+  end
 endfunction
 
 function! direnv#on_exit(_, status, ...) abort
@@ -37,7 +46,7 @@ function! direnv#on_exit(_, status, ...) abort
     endfor
   endif
   exec join(s:job_status.stdout, "\n")
-  call direnv#extra_vimrc#load()
+  call direnv#post_direnv_load()
 endfunction
 
 function! direnv#job_status_reset() abort
@@ -100,6 +109,7 @@ function! direnv#export_core() abort
     echom system(printf(join(l:cmd).' '.&shellredir, l:tmp))
     exe 'source '.l:tmp
     call delete(l:tmp)
+    call direnv#post_direnv_load()
   endif
 endfunction
 
