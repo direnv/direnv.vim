@@ -23,6 +23,8 @@ if direnv#auto()
     au!
     autocmd VimEnter * DirenvExport
     autocmd BufEnter * call direnv#extra_vimrc#check()
+    " need this to avoid an error on loading
+    autocmd User DirenvLoaded :
 
     if exists('##DirChanged')
       autocmd DirChanged * DirenvExport
