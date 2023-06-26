@@ -31,7 +31,7 @@ hi def link direnvCommand shCommandSub
 
 " Func: with paths {{{
 " These funcs takes one argument that represents a file/dir path.
-syn keyword direnvPathFunc dotenv user_rel_path find_up source_env source_up PATH_add MANPATH_add load_prefix watch_file nextgroup=direnvPath,shSingleQuote,shDoubleQuote skipwhite
+syn keyword direnvPathFunc dotenv dotenv_if_exists env_vars_required fetchurl join_args user_rel_path on_git_branch find_up has source_env source_env_if_exists source_up source_up_if_exists source_url PATH_add MANPATH_add load_prefix watch_file watch_dir semver_search strict_env unstrict_env nextgroup=direnvPath,shSingleQuote,shDoubleQuote skipwhite
 hi def link direnvPathFunc shStatement
 
 " path string can end before non-escaped [, ], (, ), {, }, #, `, ', ", ;, \, and spaces.
@@ -47,7 +47,7 @@ hi def link direnvExpandPathRel Directory
 
 " `path_add` takes two arguments that represents a variable name and a dir
 " path.
-syn keyword direnvPathAddFunc path_add nextgroup=direnvVar skipwhite
+syn keyword direnvPathAddFunc PATH_add MANPATH_add PATH_rm path_rm path_add nextgroup=direnvVar skipwhite
 hi def link direnvPathAddFunc shStatement
 
 syn match direnvVar /\S\+/ nextgroup=direnvPath,shSingleQuote,shDoubleQuote contained skipwhite
@@ -55,7 +55,7 @@ hi def link direnvVar shCommandSub
 " }}}
 
 " Func: use {{{
-syn keyword direnvUseFunc use nextgroup=direnvUseCommand skipwhite
+syn keyword direnvUseFunc use use_flake use_guix use_julia use_nix use_node use_nodenv use_rbenv use_vim rvm nextgroup=direnvUseCommand skipwhite
 hi def link direnvUseFunc shStatement
 
 " `use rbenv/nix/guix` takes several arguments.
@@ -65,7 +65,7 @@ hi def link direnvUseCommand shCommandSub
 
 " Func: layout {{{
 " `layout` takes one argument that represents a language name.
-syn keyword direnvLayoutFunc layout nextgroup=direnvLayoutLanguage,direnvLayoutLanguagePath skipwhite
+syn keyword direnvLayoutFunc layout layout_anaconda layout_go layout_julia layout_node layout_perl layout_php layout_pipenv layout_pyenv layout_python layout_python2 layout_python3 layout_ruby nextgroup=direnvLayoutLanguage,direnvLayoutLanguagePath skipwhite
 hi def link direnvLayoutFunc shStatement
 
 syn keyword direnvLayoutLanguage go node perl python3 ruby contained
@@ -78,7 +78,7 @@ hi def link direnvLayoutLanguagePath shCommandSub
 
 " Func: others {{{
 " `direnv_load` takes several arguments.
-syn keyword direnvFunc direnv_load
+syn keyword direnvFunc direnv_apply_dump direnv_layout_dir direnv_load direnv_version log_error log_status
 hi def link direnvFunc shStatement
 " }}}
 
