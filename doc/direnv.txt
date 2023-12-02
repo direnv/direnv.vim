@@ -96,7 +96,7 @@ ordered below.
 
 `:EditEnvrc`					    *direnv-commands-editenvrc*
 
-Open the detected `.envrc` if found or a new butter to edit `.envrc` on the
+Open the detected `.envrc` if found or a new buffer to edit `.envrc` on the
 current directory otherwise.
 
 =============================================================================
